@@ -38,12 +38,9 @@ Route::prefix('admins')->name('admin.')->group(function () {
     });
 
     Route::middleware('auth:admin')->group(function () {
-        Route::get('verify-email', EmailVerificationPromptController::class)
-            ->name('verification.notice');
 
-        Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
-            ->middleware(['signed', 'throttle:6,1'])
-            ->name('verification.verify');
+
+
 
         Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
             ->middleware('throttle:6,1')
@@ -60,5 +57,15 @@ Route::prefix('admins')->name('admin.')->group(function () {
         Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
             ->name('logout');
     });
-
 });
+
+
+Route::prefix("admins")
+    ->middleware(['auth:admin'])
+    ->get('verify-email', EmailVerificationPromptController::class)
+    ->name('verification.notice');
+Route::prefix('admins')
+    ->middleware(['auth:admin'])
+    ->get('verify-email/{id}/{hash}', VerifyEmailController::class)
+    ->middleware(['signed', 'throttle:6,1'])
+    ->name('verification.verify');

@@ -20,7 +20,7 @@ class NewPasswordController extends Controller
      */
     public function create(Request $request): View
     {
-        return view('admin.auth.reset-password', ['request' => $request]);
+        return view('seller.reset-password', ['request' => $request]);
         // يُفضل تخصص View للـ Admin
     }
 

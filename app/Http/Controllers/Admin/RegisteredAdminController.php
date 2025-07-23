@@ -32,7 +32,7 @@ class RegisteredAdminController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.Admin::class],
-            "phone" => ['required', 'string', 'max:15', 'unique:'.Admin::class],
+            // "phone" => ['required', 'string', 'max:15', 'unique:'.Admin::class],
 
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
@@ -40,7 +40,7 @@ class RegisteredAdminController extends Controller
         $user = Admin::create([
             'name' => $request->name,
             'email' => $request->email,
-            'phone' => $request->phone,
+            // 'phone' => $request->phone,
             'password' => Hash::make($request->password),
         ]);
 
@@ -48,6 +48,6 @@ class RegisteredAdminController extends Controller
 
         Auth::guard("admin")->login($user);
 
-        return redirect(route('admin.dashboard', absolute: false));
+        return redirect(route('dashboard', absolute: false));
     }
 }

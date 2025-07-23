@@ -1,19 +1,21 @@
 <?php
 
-use App\Http\Controllers\User\AuthenticatedSessionController;
-use App\Http\Controllers\User\ConfirmablePasswordController;
-use App\Http\Controllers\User\EmailVerificationNotificationController;
-use App\Http\Controllers\User\EmailVerificationPromptController;
-use App\Http\Controllers\User\NewPasswordController;
-use App\Http\Controllers\User\PasswordController;
-use App\Http\Controllers\User\PasswordResetLinkController;
-use App\Http\Controllers\User\RegisteredUserController;
-use App\Http\Controllers\User\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
+
+use App\Http\Controllers\User\ProfileController;
+use App\Http\Controllers\User\PasswordController;
+use App\Http\Controllers\User\NewPasswordController;
+use App\Http\Controllers\User\VerifyEmailController;
+use App\Http\Controllers\User\RegisteredUserController;
+use App\Http\Controllers\User\PasswordResetLinkController;
+use App\Http\Controllers\User\ConfirmablePasswordController;
+use App\Http\Controllers\User\AuthenticatedSessionController;
+use App\Http\Controllers\User\EmailVerificationPromptController;
+use App\Http\Controllers\User\EmailVerificationNotificationController;
 
 Route::prefix('users')->name('user.')->group(function () {
 
-    Route::middleware('guest:user')->group(function () {
+    Route::middleware('guest:web')->group(function () {
         Route::get('register', [RegisteredUserController::class, 'create'])
             ->name('register');
 
@@ -37,7 +39,7 @@ Route::prefix('users')->name('user.')->group(function () {
             ->name('password.store');
     });
 
-    Route::middleware('auth:user')->group(function () {
+    Route::middleware('auth:web')->group(function () {
         Route::get('verify-email', EmailVerificationPromptController::class)
             ->name('verification.notice');
 
@@ -61,4 +63,15 @@ Route::prefix('users')->name('user.')->group(function () {
             ->name('logout');
     });
 
+    Route::middleware(['auth:web',/*"verified"*/])->group(function () {
+
+        Route::get('/dashboard', function () {
+            return view('user.dashboard');
+        })->name('dashboard');
+
+
+        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    });
 });

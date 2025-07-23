@@ -19,7 +19,7 @@ class RegisteredSellerController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        return view('seller.register');
     }
 
     /**
@@ -48,6 +48,6 @@ class RegisteredSellerController extends Controller
 
         Auth::guard("seller")->login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('seller.dashboard', absolute: false));
     }
 }

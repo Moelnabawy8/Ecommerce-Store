@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Seller extends Model
+class Seller extends Authenticatable implements MustVerifyEmail
 {
-     use HasFactory, Notifiable;
-     protected $fillable=[
+    use HasFactory, Notifiable;
+
+    protected $fillable = [
         "name",
         "shop_name",
         "email",
@@ -21,6 +23,5 @@ class Seller extends Model
         "code_expired_at",
         "remember_token",
         "status"
-     ];
-     
+    ];
 }
