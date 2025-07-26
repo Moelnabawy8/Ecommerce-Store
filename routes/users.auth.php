@@ -24,7 +24,8 @@ Route::prefix('users')->name('user.')->group(function () {
         Route::get('login', [AuthenticatedSessionController::class, 'create'])
             ->name('login');
 
-        Route::post('login', [AuthenticatedSessionController::class, 'store']);
+        Route::post('login', [AuthenticatedSessionController::class, 'store'])
+            ->name('login.store');
 
         Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
             ->name('password.request');
@@ -32,8 +33,7 @@ Route::prefix('users')->name('user.')->group(function () {
         Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
             ->name('password.email');
 
-        Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
-            ->name('password.reset');
+        
 
         Route::post('reset-password', [NewPasswordController::class, 'store'])
             ->name('password.store');
@@ -44,7 +44,7 @@ Route::prefix('users')->name('user.')->group(function () {
             ->name('verification.notice');
 
         Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
-            ->middleware(['signed', 'throttle:6,1'])
+            ->middleware(['auth:web', 'signed', 'throttle:6,1'])
             ->name('verification.verify');
 
         Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
@@ -63,15 +63,18 @@ Route::prefix('users')->name('user.')->group(function () {
             ->name('logout');
     });
 
-    Route::middleware(['auth:web',/*"verified"*/])->group(function () {
+    Route::middleware(['auth:web', /*'verified'*/])->group(function () {
+        Route::get('profile', [ProfileController::class, 'edit'])
+            ->name('profile.edit');
 
-        Route::get('/dashboard', function () {
-            return view('user.dashboard');
-        })->name('dashboard');
+        Route::patch('profile', [ProfileController::class, 'update'])
+            ->name('profile.update');
 
-
-        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+        Route::delete('profile', [ProfileController::class, 'destroy'])
+            ->name('profile.destroy');
     });
+
 });
+Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
+    ->name('password.reset')
+    ->middleware('guest:web');

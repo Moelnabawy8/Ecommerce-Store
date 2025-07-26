@@ -1,6 +1,7 @@
 <?php
-
 namespace App\Http\Controllers\User;
+
+
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
@@ -16,7 +17,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
-        return view('User.login');
+        return view('web.login');
     }
 
     /**
@@ -28,7 +29,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('user.dashboard', absolute: false));
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**

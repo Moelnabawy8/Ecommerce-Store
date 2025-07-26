@@ -15,7 +15,7 @@ class PasswordResetLinkController extends Controller
      */
     public function create(): View
     {
-        return view('User.forgot-password');
+        return view('web.forgot-password');
     }
 
     /**
@@ -27,7 +27,7 @@ class PasswordResetLinkController extends Controller
             'email' => ['required', 'email'],
         ]);
 
-        $status = Password::broker('users')->sendResetLink(
+        $status = Password::broker('web')->sendResetLink(
             $request->only('email')
         );
 

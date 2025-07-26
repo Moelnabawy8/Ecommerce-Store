@@ -17,7 +17,7 @@ class Button extends Component
 
     public function render(): View|Closure|string
     {
-        return view('User.components.button');
+        return view('components.button');
     }
 }
 

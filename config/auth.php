@@ -70,15 +70,15 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'model' =>  App\Models\User::class,
         ],
         'admins' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\Admin::class),
+            'model' =>  App\Models\Admin::class,
         ],
         'sellers' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\Seller::class),
+            'model' => App\Models\Seller::class,
         ],
 
         // 'users' => [
@@ -107,7 +107,7 @@ return [
     */
 
     'passwords' => [
-        'users' => [
+        'web' => [
             'provider' => 'users',
             'table' => 'password_reset_tokens',
             'expire' => 60,
