@@ -16,15 +16,20 @@ require __DIR__.'/sellers.auth.php';
 
 Route::get('/login', function () {
     if (auth('admin')->check()) {
-        return redirect()->route('admin.login');
+        return redirect()->route('admin.dashboard'); // لوحه تحكم الادمن
     }
 
     if (auth('seller')->check()) {
-        return redirect()->route('seller.login');
+        return redirect()->route('seller.dashboard'); // لوحه تحكم البائع
     }
 
-    return redirect()->route('user.login');
+    if (auth('web')->check()) {
+        return redirect()->route('user.dashboard'); // لوحه تحكم المستخدم العادي
+    }
+
+    return view('auth.login'); // أو أي صفحة تسجيل دخول عامة لو عايز
 })->name('login');
+
 
 Route::get('/dashboard', function () {
     $guards = ['admin', 'seller', 'web'];
