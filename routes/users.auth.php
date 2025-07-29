@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\{
     AuthenticatedSessionController,
@@ -14,9 +13,9 @@ use App\Http\Controllers\User\{
     ProfileController
 };
 
-Route::prefix('users')->name('user.')->group(function () {
+Route::prefix('users')->name('web.')->group(function () {
 
-    // Guest routes (unauthenticated)
+    // Guest routes
     Route::middleware('guest:web')->group(function () {
         Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
         Route::post('register', [RegisteredUserController::class, 'store']);
@@ -30,18 +29,21 @@ Route::prefix('users')->name('user.')->group(function () {
         Route::post('reset-password', [NewPasswordController::class, 'store'])->name('password.store');
     });
 
-    // Authenticated routes
+    // Authenticated but NOT verified yet
     Route::middleware(['auth:web'])->group(function () {
-        Route::get('dashboard', function () {
-            return view('web.dashboard');
-        })->name('dashboard');
-
+        // Routes related to email verification
         Route::get('verify-email', EmailVerificationPromptController::class)->name('verification.notice');
         Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
             ->middleware(['signed', 'throttle:6,1'])
             ->name('verification.verify');
         Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
-            ->middleware('throttle:6,1')->name('verification.send');
+            ->middleware('throttle:6,1')
+            ->name('verification.send');
+    });
+
+    // Authenticated + Verified
+    Route::middleware(['auth:web', 'verified.custom'])->group(function () {
+        Route::get('dashboard', fn () => view('web.dashboard'))->name('dashboard');
 
         Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])->name('password.confirm');
         Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);

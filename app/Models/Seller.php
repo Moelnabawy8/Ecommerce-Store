@@ -24,4 +24,8 @@ class Seller extends Authenticatable implements MustVerifyEmail
         "remember_token",
         "status"
     ];
+    public function guardName(): string
+{
+    return 'seller';
+}
 }

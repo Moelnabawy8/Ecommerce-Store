@@ -17,4 +17,8 @@ class Admin extends Authenticatable implements MustVerifyEmail
         'password',
         'status',
     ];
+    public function guardName(): string
+{
+    return 'admin';
+}
 }

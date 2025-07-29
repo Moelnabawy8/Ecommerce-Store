@@ -24,10 +24,10 @@ Route::get('/login', function () {
     }
 
     if (auth('web')->check()) {
-        return redirect()->route('user.dashboard'); // لوحه تحكم المستخدم العادي
+        return redirect()->route('web.dashboard'); // لوحه تحكم المستخدم العادي
     }
 
-    return view('auth.login'); // أو أي صفحة تسجيل دخول عامة لو عايز
+    return view('web.login'); // أو أي صفحة تسجيل دخول عامة لو عايز
 })->name('login');
 
 
@@ -39,4 +39,4 @@ Route::get('/dashboard', function () {
         }
     }
     return redirect()->route('login');
-})->middleware(['auth:admin,seller,web', 'verified'])->name('dashboard');
+})->middleware(['auth:admin,seller,web', 'verified.custom'])->name('dashboard');
