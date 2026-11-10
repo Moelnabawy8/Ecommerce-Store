@@ -1,61 +1,88 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Ecommerce Store
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**A Laravel e-commerce foundation with separate customer, seller and administrator authentication.**
 
-## About Laravel
+[Overview](#overview) · [Local setup](#local-setup) · [Code guide](#code-guide) · [Verification](#verification)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Overview
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+A Laravel 12 project exploring multi-guard authentication for an e-commerce application. The codebase includes separate account models and route files alongside catalogue, review and address entities.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Features
 
-## Learning Laravel
+- Separate web, seller and administrator authentication flows.
+- Guard-aware login and dashboard routing.
+- Custom email verification middleware.
+- Product, category, review and address-related data models.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Technology
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+| Layer | Stack |
+| --- | --- |
+| Backend | PHP `^8.2` · Laravel `^12.0` |
+| Interface and tooling | Blade · Laravel Breeze · Tailwind CSS · Vite 6 |
+| Data | Eloquent ORM · SQLite by default; other configured drivers are available |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Version constraints above come from [composer.json](composer.json) and [package.json](package.json). Use a PHP runtime compatible with `composer.lock`, Composer 2, and a Node.js/npm version compatible with the declared asset tooling. Enable the PHP extensions required by Composer and the selected database driver.
 
-## Laravel Sponsors
+## Local setup
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+git clone https://github.com/Moelnabawy8/Ecommerce-Store.git
+cd Ecommerce-Store
+composer install
+cp .env.example .env
+php artisan key:generate
+npm ci
+```
 
-### Premium Partners
+Create the SQLite file if it does not already exist, and point `DB_DATABASE` in your local `.env` to its absolute path:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+php -r "file_exists('database/database.sqlite') || touch('database/database.sqlite');"
+```
 
-## Contributing
+Keep `DB_CONNECTION=sqlite` for this setup. Set `APP_URL=http://127.0.0.1:8000`. For local mail inspection, set `MAIL_MAILER=log` instead of configuring a live mail provider.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+php artisan migrate
+php artisan storage:link
+npm run build
+php artisan serve
+```
 
-## Code of Conduct
+Open [the local application](http://127.0.0.1:8000). For asset hot reload, run `npm run dev` in a second terminal while the PHP server remains running.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Project scope
 
-## Security Vulnerabilities
+This repository is an e-commerce foundation. The current route and model structure demonstrates account separation and catalogue modelling; it should not be read as a claim that a complete order or payment flow has been implemented.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Start at `/` or `/login`. `/dashboard` selects the dashboard associated with the active guard.
 
-## License
+## Code guide
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+| Path | Responsibility |
+| --- | --- |
+| [`routes/web.php`](routes/web.php) | Login selection and guard-aware dashboard routing |
+| [`routes/users.auth.php`](routes/users.auth.php) | Customer authentication |
+| [`routes/sellers.auth.php`](routes/sellers.auth.php) | Seller authentication |
+| [`routes/admins.auth.php`](routes/admins.auth.php) | Administrator authentication |
+| [`app/Models/`](app/Models/) | Accounts, catalogue, reviews and address entities |
+
+## Verification
+
+The checked-in tests focus on authentication/profile scaffolding. Multi-guard permissions and business flows require dedicated tests.
+
+Use an isolated testing database and review [phpunit.xml](phpunit.xml) before running the suite. Database-resetting tests must point to disposable data.
+
+```bash
+php artisan test
+```
+
+To check PHP formatting without modifying files:
+
+```bash
+./vendor/bin/pint --test
+```
+
+Build the front-end assets with `npm run build` after changing JavaScript, CSS or templates. Keep local configuration in `.env` and commit only configuration examples.
